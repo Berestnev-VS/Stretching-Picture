@@ -32,6 +32,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         return scrollView
     }()
     let initialImageViewHeight: CGFloat = 270.0
+    var scrollViewTopConstraint: NSLayoutConstraint!
     var imageViewHeightConstraint: NSLayoutConstraint!
     
     override func viewDidLoad() {
@@ -39,7 +40,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         view.backgroundColor = .white
         setupConstraints()
         scrollView.delegate = self
-
+        
     }
     
     func setupConstraints() {
@@ -52,7 +53,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
             imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+//            scrollView.topAnchor.constraint(equalTo: imageView.bottomAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -62,25 +63,26 @@ class ViewController: UIViewController, UIScrollViewDelegate {
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            contentView.heightAnchor.constraint(equalToConstant: 1000) // Установите нужную высоту
+            contentView.heightAnchor.constraint(equalToConstant: 1000) 
         ])
         imageViewHeightConstraint = imageView.heightAnchor.constraint(equalToConstant: initialImageViewHeight)
+        scrollViewTopConstraint = scrollView.topAnchor.constraint(equalTo: view.topAnchor, constant: imageViewHeightConstraint.constant)
         imageViewHeightConstraint.isActive = true
-
-        // Установите начальный внутренний отступ для scrollView
-        scrollView.contentInset = UIEdgeInsets(top: initialImageViewHeight, left: 0, bottom: 0, right: 0)
+        scrollViewTopConstraint.isActive = true
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let y = scrollView.contentOffset.y
+        scrollView.scrollIndicatorInsets = UIEdgeInsets(top: -y, left: 0, bottom: 0, right: 0)
+        
         let newImageViewHeight = initialImageViewHeight - y
-
+        
         if newImageViewHeight > initialImageViewHeight {
             imageViewHeightConstraint.constant = newImageViewHeight
-            scrollView.contentInset = UIEdgeInsets(top: newImageViewHeight, left: 0, bottom: 0, right: 0)
         } else {
             imageViewHeightConstraint.constant = initialImageViewHeight
-            scrollView.contentInset = UIEdgeInsets(top: initialImageViewHeight, left: 0, bottom: 0, right: 0)
         }
     }
+
+    
 }
