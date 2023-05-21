@@ -31,77 +31,61 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
+    
     let initialImageViewHeight: CGFloat = 270.0
     
     var scrollViewTopConstraint: NSLayoutConstraint!
-    
+    var imageViewTopConstraint: NSLayoutConstraint!
     var imageViewHeightConstraint: NSLayoutConstraint!
-    
-    var contentViewTopConstraint: NSLayoutConstraint!
-
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupConstraints()
         scrollView.delegate = self
-        scrollView.backgroundColor = .red
-//        scrollView.scrollIndicatorInsets = UIEdgeInsets(top: initialImageViewHeight, left: 0, bottom: 0, right: 0)
         
     }
     
     func setupConstraints() {
-//        view.addSubview(imageView)
+        view.addSubview(imageView)
         view.addSubview(scrollView)
-        scrollView.addSubview(imageView)
         scrollView.addSubview(contentView)
         
         NSLayoutConstraint.activate([
-//            imageView.topAnchor.constraint(equalTo: view.topAnchor),
-//            imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-//            imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
-            imageView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            imageView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            
-//            scrollView.topAnchor.constraint(equalTo: imageView.bottomAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-//            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: initialImageViewHeight),
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: initialImageViewHeight),
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             contentView.heightAnchor.constraint(equalToConstant: 1000) 
         ])
+        
         imageViewHeightConstraint = imageView.heightAnchor.constraint(equalToConstant: initialImageViewHeight)
+        imageViewTopConstraint = imageView.topAnchor.constraint(equalTo: view.topAnchor)
+        scrollViewTopConstraint = scrollView.topAnchor.constraint(equalTo: view.topAnchor, constant: imageViewHeightConstraint.constant)
         
-        scrollViewTopConstraint = scrollView.topAnchor.constraint(equalTo: view.topAnchor)
-        
-        contentViewTopConstraint = contentView.topAnchor.constraint(equalTo: imageView.bottomAnchor)
-        
+        imageViewTopConstraint.isActive = true
         imageViewHeightConstraint.isActive = true
         scrollViewTopConstraint.isActive = true
-        contentViewTopConstraint.isActive = true
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let y = scrollView.contentOffset.y
         let newImageViewHeight = initialImageViewHeight - y
-        
         if newImageViewHeight > initialImageViewHeight {
             imageViewHeightConstraint.constant = newImageViewHeight
-//            contentViewTopConstraint.constant = newImageViewHeight
-            scrollView.scrollIndicatorInsets = UIEdgeInsets(top: newImageViewHeight - view.safeAreaInsets.top, left: 0, bottom: 0, right: 0)
+            scrollView.scrollIndicatorInsets = UIEdgeInsets(top: -y, left: 0, bottom: 0, right: 0)
         } else {
+            imageViewTopConstraint.constant = -y
             imageViewHeightConstraint.constant = initialImageViewHeight
-            scrollView.scrollIndicatorInsets = UIEdgeInsets(top: initialImageViewHeight - view.safeAreaInsets.top, left: 0, bottom: 0, right: 0)
         }
     }
-
     
 }
