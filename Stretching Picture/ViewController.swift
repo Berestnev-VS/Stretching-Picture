@@ -81,8 +81,9 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         let newImageViewHeight = initialImageViewHeight - y
         if newImageViewHeight > initialImageViewHeight {
             imageViewHeightConstraint.constant = newImageViewHeight
+            imageViewTopConstraint.constant = 0
             scrollView.scrollIndicatorInsets = UIEdgeInsets(top: -y, left: 0, bottom: 0, right: 0)
-        } else {
+        } else if newImageViewHeight < initialImageViewHeight {
             imageViewTopConstraint.constant = -y
             imageViewHeightConstraint.constant = initialImageViewHeight
         }
